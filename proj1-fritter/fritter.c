@@ -1,0 +1,110 @@
+#include "fritter.h"
+
+int aclGetLine(char* buf, int fd);
+
+int main(int argc, char** argv){
+
+	uid_t rUid, eUid, sUid;
+
+	int fdAcl;
+	int fdFile;
+	char* aclFileName;
+	char buf[80];
+
+	int a;
+
+	if(argc < 3){
+		printf("  usage -- fritter <logfile> <entry>\n\n");
+		exit(1);
+	}
+	//get the real and effective uid
+	getresuid(&rUid, &eUid, &sUid);
+
+	//set the effective UID down to the real UID value
+	seteuid(rUid);
+
+	printf("argv[1] length: %d\n", strlen(argv[1]));
+
+	//allocate space for filename
+	aclFileName = malloc(sizeof(char)*(strlen(argv[1])+5));
+	
+	//did the malloc fail?
+	if(aclFileName==NULL){
+		perror("aclFileName malloc");
+		exit(1);
+	}
+
+	//copy the filename argument with .acl appended
+	snprintf(aclFileName,sizeof(char)*(strlen(argv[1])+5),"%s.acl",argv[1]);
+
+	//turn the effective permissions back up
+	seteuid(sUid);
+
+	//open the acl file for reading
+	fdAcl = open(aclFileName, O_RDONLY | O_NOFOLLOW);
+
+	//did the open fail?
+	if(fdAcl == -1){
+		perror("aclFile open()");
+		exit(1);
+	}
+
+	a = 0;
+	do{
+	memset(&buf[0], '\0', 60);
+	a = aclGetLine(&buf[0], fdAcl);
+	if(a==0)
+	printf("%s (%d)\n",buf, strlen(buf));
+	}while(a==0);
+	//open the logfile
+	fdFile = open(argv[1], O_RDWR | O_NOFOLLOW);
+
+	//did the open fail?
+	if(fdFile == -1){
+		perror("logfile open()");
+		exit(1);
+	}
+	
+
+	printf("aclFileName= %s\n", aclFileName);
+	
+	
+	//check to see if the file exists
+	//check to see if the .acl file exists
+	//attempt to open the acl file
+	//loop for 
+
+	return 1;
+
+}
+
+int aclGetLine(char* buf, int fd){
+	int i;
+	int ret;
+	char ch;
+
+	//read a character
+	ret = read(fd, &ch, 1);
+
+	//did the read fail?
+	if(ret == 0)
+		return -1;
+
+	//read characters until a newline is hit
+	for(i = 0; ch != '\n' && i < 30; i++){
+		
+		//skip over whitespace
+		if(ch != '\t' && ch != ' ')
+			//copy the character to the buffer
+			strncpy(&buf[i], &ch, 1);
+		//read another character
+		ret=read(fd, &ch, 1);
+
+		//did the read fail?
+		if(ret == 0)
+			return -1;
+	}
+	//return 0 on successful read of a line
+	return 0;
+
+}
