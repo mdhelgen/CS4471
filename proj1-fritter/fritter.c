@@ -103,23 +103,32 @@ int aclGetLine(char* buf, int fd){
 	//read a character
 	ret = read(fd, &ch, 1);
 
-	//did the read fail?
+	//has the end of the file been reached?
 	if(ret == 0)
 		return -1;
+	//did the read fail?
+	if(ret < 0){
+		perror("read");
+	}
 
 	//read characters until a newline is hit
 	for(i = 0; ch != '\n' && i < 30; i++){
-		
 		//skip over whitespace
-		if(ch != '\t' && ch != ' ')
+		if(ch != '\t' && ch != ' '){
 			//copy the character to the buffer
 			strncpy(&buf[i], &ch, 1);
+		}
+		
 		//read another character
 		ret=read(fd, &ch, 1);
 
-		//did the read fail?
+		//has the end of the file been reached?
 		if(ret == 0)
 			return -1;
+		//did the read fail?
+		if(ret < 0){
+			perror("read");
+		}
 	}
 	//return 0 on successful read of a line
 	return 0;
