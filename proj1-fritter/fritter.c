@@ -50,12 +50,13 @@ int main(int argc, char** argv){
 	}
 
 	a = 0;
+	//read the users from the .acl file
 	do{
-	memset(&buf[0], '\0', 60);
-	a = aclGetLine(&buf[0], fdAcl);
-	if(a==0)
-	printf("%s (%d)\n",buf, strlen(buf));
+		a = aclGetLine(&buf[0], fdAcl);
+		if(a==0)
+		printf("%s (%d)\n",buf, strlen(buf));
 	}while(a==0);
+	
 	//open the logfile
 	fdFile = open(argv[1], O_RDWR | O_NOFOLLOW);
 
@@ -95,6 +96,9 @@ int aclGetLine(char* buf, int fd){
 	int i;
 	int ret;
 	char ch;
+
+	//clear out buf before reading
+	memset(buf, '\0', 40);
 
 	//read a character
 	ret = read(fd, &ch, 1);
