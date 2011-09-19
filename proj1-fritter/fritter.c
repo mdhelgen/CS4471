@@ -77,7 +77,20 @@ int main(int argc, char** argv){
 	return 1;
 
 }
-
+/**
+ * int aclGetLine(char* buf, int fd)
+ *
+ * Gets a line of text from the file described by fd, and places it in buf
+ *
+ * The file is read character by character, and non-whitespace characters are copied
+ * to buf. When a newline or length limit is hit, the function returns, leaving data in buf.
+ * When the end of the file is hit, the function returns with a different value.
+ *
+ * @param buf The memory location of the character buffer to put the read data
+ * @param fd The file descriptor of an opened .acl file
+ *
+ * @returns 0 when a newline character is hit (more data is left) or -1 on EOF 
+ */
 int aclGetLine(char* buf, int fd){
 	int i;
 	int ret;
