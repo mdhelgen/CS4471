@@ -58,7 +58,7 @@ int main(int argc, char** argv){
 	a = 0;
 	//read the users from the .acl file
 	do{
-		a = aclGetLine(&buf[0], fdAcl);
+		a = aclGetLine(buf, fdAcl);
 		if(a==0)
 		printf("%s (%d)\n",buf, strlen(buf));
 	}while(a==0);
