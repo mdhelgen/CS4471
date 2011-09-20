@@ -45,14 +45,20 @@ int main(int argc, char** argv){
 
 	//did the open fail?
 	if(fdAcl == -1){
-		perror("aclFile open()");
-		exit(1);
+		if(errno == ENOENT){
+			printf("Error: %s does not exist\n", aclFileName);
+			exit(1);
+		}
+		else{
+			perror("aclFile open()");
+			exit(1);
+		}
 	}
 
 	a = 0;
 	//read the users from the .acl file
 	do{
-		a = aclGetLine(&buf[0], fdAcl);
+		a = aclGetLine(buf, fdAcl);
 		if(a==0)
 		printf("%s (%d)\n",buf, strlen(buf));
 	}while(a==0);
@@ -62,8 +68,14 @@ int main(int argc, char** argv){
 
 	//did the open fail?
 	if(fdFile == -1){
-		perror("logfile open()");
-		exit(1);
+		if(errno == ENOENT){
+			printf("Error: %s does not exist\n", argv[1]);
+			exit(1);
+		}
+		else{	
+			perror("logfile open()");
+			exit(1);
+		}
 	}
 	
 
