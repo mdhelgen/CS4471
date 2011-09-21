@@ -123,16 +123,23 @@ int aclGetLine(char* buf, int fd){
 	if(ret < 0){
 		perror("read");
 	}
-
+	
+	i = 0;
 	j = 0;
-	//read characters until a newline is hit
-	for(i = 0; ch != '\n' && i < 30; i++){
+	
+	while(ch == '\t' || ch == ' '){
+		ret = read(fd, &ch, 1);
+		if (ret == 0)
+			return -1;
+		if (ret < 0)
+			perror("read");
+	}
 
-		//skip over whitespace
-		if(ch != '\t' && ch != ' '){
-			//copy the character to the buffer
-			strncpy(&buf[j++], &ch, 1);
-		}
+	//read characters until a newline is hit
+	for(; ch != '\n' && i < 30; i++){
+
+		//todo: check that this is a non-numeric printable character
+		strncpy(&buf[j++], &ch, 1);
 		
 		//read another character
 		ret=read(fd, &ch, 1);
