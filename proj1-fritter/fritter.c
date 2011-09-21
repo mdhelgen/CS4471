@@ -126,11 +126,14 @@ int aclGetLine(char* buf, int fd){
 	
 	i = 0;
 	j = 0;
-	
+
+	//pass over preceding whitespace
 	while(ch == '\t' || ch == ' '){
 		ret = read(fd, &ch, 1);
+		//end of file?
 		if (ret == 0)
 			return -1;
+		//error?
 		if (ret < 0)
 			perror("read");
 	}
@@ -138,7 +141,13 @@ int aclGetLine(char* buf, int fd){
 	//read characters until a newline is hit
 	for(; ch != '\n' && i < 30; i++){
 
-		//todo: check that this is a non-numeric printable character
+		//check that the read character is a non-numeric printable character
+		if( !(ch >= 65 && ch <= 90) && !(ch >= 97 && ch <= 122)){
+			printf("Error: malformed line in acl file (character %d encountered)\n", ch);
+			exit(1);
+		}
+
+		//copy the character into the buffer
 		strncpy(&buf[j++], &ch, 1);
 		
 		//read another character
