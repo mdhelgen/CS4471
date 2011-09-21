@@ -106,6 +106,7 @@ int main(int argc, char** argv){
  */
 int aclGetLine(char* buf, int fd){
 	int i;
+	int j;
 	int ret;
 	char ch;
 
@@ -122,14 +123,23 @@ int aclGetLine(char* buf, int fd){
 	if(ret < 0){
 		perror("read");
 	}
+	
+	i = 0;
+	j = 0;
+	
+	while(ch == '\t' || ch == ' '){
+		ret = read(fd, &ch, 1);
+		if (ret == 0)
+			return -1;
+		if (ret < 0)
+			perror("read");
+	}
 
 	//read characters until a newline is hit
-	for(i = 0; ch != '\n' && i < 30; i++){
-		//skip over whitespace
-		if(ch != '\t' && ch != ' '){
-			//copy the character to the buffer
-			strncpy(&buf[i], &ch, 1);
-		}
+	for(; ch != '\n' && i < 30; i++){
+
+		//todo: check that this is a non-numeric printable character
+		strncpy(&buf[j++], &ch, 1);
 		
 		//read another character
 		ret=read(fd, &ch, 1);
@@ -142,6 +152,7 @@ int aclGetLine(char* buf, int fd){
 			perror("read");
 		}
 	}
+
 	//return 0 on successful read of a line
 	return 0;
 
