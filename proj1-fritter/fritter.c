@@ -17,6 +17,22 @@ int main(int argc, char** argv){
 		printf("  usage -- fritter <logfile> <entry>\n\n");
 		exit(1);
 	}
+
+
+struct passwd *passwd;           /* man getpwuid */
+passwd = getpwuid ( getuid());   /* Get the uid of the running processand use it to get a record from /etc/passwd */
+ 
+ 	printf("\n The Real User Name is %s ", passwd->pw_gecos);
+	printf("\n The Login Name is %s ", passwd->pw_name);
+	printf("\n The Home Directory is %s", passwd->pw_dir);
+	printf("\n The Login Shell is %s ", passwd->pw_shell);
+
+	printf("\n The Passwd is %s ", getpwuid(getuid())->pw_passwd);
+	printf("\n The uid is %lu ", (unsigned long) getpwuid(getuid())->pw_uid);
+	printf("\n The gid is %lu \n\n", (unsigned long) getpwuid(getuid())->pw_gid);
+
+
+
 	//get the real and effective uid
 	getresuid(&rUid, &eUid, &sUid);
 
