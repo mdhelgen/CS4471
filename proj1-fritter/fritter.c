@@ -6,6 +6,7 @@ int main(int argc, char** argv){
 
 	uid_t rUid, eUid, sUid;
 
+	struct passwd *passwd;
 	int fdAcl;
 	int fdFile;
 	char* aclFileName;
@@ -19,8 +20,7 @@ int main(int argc, char** argv){
 	}
 
 
-struct passwd *passwd;           /* man getpwuid */
-passwd = getpwuid ( getuid());   /* Get the uid of the running processand use it to get a record from /etc/passwd */
+	passwd = getpwuid ( getuid());   /* Get the uid of the running processand use it to get a record from /etc/passwd */
  
  	printf("\n The Real User Name is %s ", passwd->pw_gecos);
 	printf("\n The Login Name is %s ", passwd->pw_name);
@@ -32,9 +32,11 @@ passwd = getpwuid ( getuid());   /* Get the uid of the running processand use it
 	printf("\n The gid is %lu \n\n", (unsigned long) getpwuid(getuid())->pw_gid);
 
 
-
 	//get the real and effective uid
 	getresuid(&rUid, &eUid, &sUid);
+
+	//get info from the /etc/passwd file about the realuid running the process
+	passwd = getpwuid(rUid);
 
 	//set the effective UID down to the real UID value
 	seteuid(rUid);
@@ -71,16 +73,21 @@ passwd = getpwuid ( getuid());   /* Get the uid of the running processand use it
 		}
 	}
 
+	printf("The real userlogin is %s\n", passwd->pw_name);
 	a = 0;
 	//read the users from the .acl file
 	do{
 		a = aclGetLine(buf, fdAcl);
-		if(a==0)
-		printf("%s (%d)\n",buf, strlen(buf));
+		if(a==0){
+			printf("%s (%d)  ---- %d\n",buf, strlen(buf), strcmp(buf, passwd->pw_name));
+		}
 	}while(a==0);
 	
 	//open the logfile
 	fdFile = open(argv[1], O_RDWR | O_NOFOLLOW);
+
+	//turn the permissions back down once the file has been opened successfuly
+	seteuid(rUid);
 
 	//did the open fail?
 	if(fdFile == -1){
