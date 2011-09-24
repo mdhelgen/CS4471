@@ -11,6 +11,7 @@ int main(int argc, char** argv){
 	int fdFile;
 	char* aclFileName;
 	char buf[80];
+	int aclMatch = 0;
 
 	int a;
 
@@ -74,15 +75,28 @@ int main(int argc, char** argv){
 	}
 
 	printf("The real userlogin is %s\n", passwd->pw_name);
+
 	a = 0;
 	//read the users from the .acl file
 	do{
 		a = aclGetLine(buf, fdAcl);
 		if(a==0){
 			printf("%s (%d)  ---- %d\n",buf, strlen(buf), strcmp(buf, passwd->pw_name));
+
+			//does the acl entry match the rUid's login?
+			if (strcmp(buf, passwd->pw_name) == 0){
+				aclMatch = 1;
+			}
 		}
-	}while(a==0);
-	
+	}while(a == 0 && aclMatch == 0);
+
+	//all of the acl entries have been read
+	//was there a match to the real user?
+	if(aclMatch == 0){
+		printf("Error: the acl file does not provide permissions for you to access the file.\n");
+		exit(1);
+	}
+
 	//open the logfile
 	fdFile = open(argv[1], O_RDWR | O_NOFOLLOW);
 
