@@ -120,17 +120,19 @@ int main(int argc, char** argv){
 
 	int totalWritten = 0;
 	int ret;
+	//write until the entire argument is written
 	while(totalWritten < strlen(argv[2])){
-		
+	
+		//write the message to the file
 		ret = write(fdFile, &argv[2][totalWritten], strlen(argv[2])-totalWritten);
 		totalWritten += ret;
 	
+		if (ret == -1)
+			perror("write");
 	}
-	if (ret == -1)
-		perror("write");
 	
 
-
+	//successful completion
 	return 1;
 
 }
