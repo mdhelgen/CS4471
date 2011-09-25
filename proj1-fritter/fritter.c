@@ -98,7 +98,7 @@ int main(int argc, char** argv){
 	}
 
 	//open the logfile
-	fdFile = open(argv[1], O_RDWR | O_NOFOLLOW);
+	fdFile = open(argv[1], O_WRONLY | O_NOFOLLOW | O_APPEND);
 
 	//turn the permissions back down once the file has been opened successfuly
 	seteuid(rUid);
@@ -117,7 +117,9 @@ int main(int argc, char** argv){
 	
 
 	printf("aclFileName= %s\n", aclFileName);
-	
+
+
+	write(fdFile, argv[2], strlen(argv[2]));
 	
 	//check to see if the file exists
 	//check to see if the .acl file exists
