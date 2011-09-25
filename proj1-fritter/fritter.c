@@ -121,10 +121,6 @@ int main(int argc, char** argv){
 
 	write(fdFile, argv[2], strlen(argv[2]));
 	
-	//check to see if the file exists
-	//check to see if the .acl file exists
-	//attempt to open the acl file
-	//loop for 
 
 	return 1;
 
@@ -178,7 +174,7 @@ int aclGetLine(char* buf, int fd){
 	}
 
 	//read characters until a newline is hit
-	for(; ch != '\n' && i < 30; i++){
+	for(; (ch != '\n' && ch != ' ' && ch != '\t') && i < 30; i++){
 
 		//check that the read character is a non-numeric printable character
 		if( !(ch >= 65 && ch <= 90) && !(ch >= 97 && ch <= 122)){
@@ -200,6 +196,28 @@ int aclGetLine(char* buf, int fd){
 			perror("read");
 		}
 	}
+	
+
+	//if whitepace was hit, only whitespace should be seen until a newline
+	if( ch == '\t' || ch == ' '){
+		while(ch == '\t' || ch == ' '){
+			ret = read(fd, &ch, 1);
+			//end of file?
+			if (ret == 0)
+				return -1;
+			//error?
+			if (ret < 0)
+				perror("read");
+			//if the character isn't whitespace
+			if (ch != '\t' && ch != '\n' && ch != ' '){
+
+				printf("Error: malformed line in acl file (character %d encountered)\n", ch);
+				exit(1);
+			}
+		}
+	}
+
+	
 
 	//return 0 on successful read of a line
 	return 0;
