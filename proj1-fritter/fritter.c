@@ -118,9 +118,18 @@ int main(int argc, char** argv){
 
 	printf("aclFileName= %s\n", aclFileName);
 
-
-	write(fdFile, argv[2], strlen(argv[2]));
+	int totalWritten = 0;
+	int ret;
+	while(totalWritten < strlen(argv[2])){
+		
+		ret = write(fdFile, &argv[2][totalWritten], strlen(argv[2])-totalWritten);
+		totalWritten += ret;
 	
+	}
+	if (ret == -1)
+		perror("write");
+	
+
 
 	return 1;
 
