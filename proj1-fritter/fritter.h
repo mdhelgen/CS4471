@@ -1,3 +1,11 @@
+/**
+ * Matt Helgen (mdhelgen)
+ * CS4471 project 1
+ * 9/25/2011
+ *
+ */
+
+
 #ifndef FRITTER_H_
 #define FRITTER_H_
 
@@ -9,6 +17,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <pwd.h>
 #include <errno.h>
 #endif
 
