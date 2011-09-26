@@ -15,30 +15,29 @@ int main(int argc, char** argv){
 
 	int a;
 
+
+	int wtf = 0;
+
 	if(argc < 3){
 		printf("  usage -- fritter <logfile> <entry>\n\n");
 		exit(1);
 	}
 
+	if( strlen(argv[2]) > 82){
+		printf("Error: the entry cannot exceed 81 characters\n");
+		exit(1);
+	}
 
-	passwd = getpwuid ( getuid());   /* Get the uid of the running processand use it to get a record from /etc/passwd */
+	//get info from the /etc/passwd file
+	passwd = getpwuid ( getuid());  
  
- 	printf("\n The Real User Name is %s ", passwd->pw_gecos);
-	printf("\n The Login Name is %s ", passwd->pw_name);
-	printf("\n The Home Directory is %s", passwd->pw_dir);
-	printf("\n The Login Shell is %s ", passwd->pw_shell);
-
-	printf("\n The Passwd is %s ", getpwuid(getuid())->pw_passwd);
-	printf("\n The uid is %lu ", (unsigned long) getpwuid(getuid())->pw_uid);
-	printf("\n The gid is %lu \n\n", (unsigned long) getpwuid(getuid())->pw_gid);
-
 
 	//get the real and effective uid
 	getresuid(&rUid, &eUid, &sUid);
 
 	//get info from the /etc/passwd file about the realuid running the process
 	passwd = getpwuid(rUid);
-
+	
 	//set the effective UID down to the real UID value
 	seteuid(rUid);
 
@@ -73,8 +72,6 @@ int main(int argc, char** argv){
 			exit(1);
 		}
 	}
-
-	printf("The real userlogin is %s\n", passwd->pw_name);
 
 	a = 0;
 	//read the users from the .acl file
@@ -115,8 +112,6 @@ int main(int argc, char** argv){
 		}
 	}
 	
-
-	printf("aclFileName= %s\n", aclFileName);
 
 	int totalWritten = 0;
 	int ret;
@@ -172,7 +167,6 @@ int aclGetLine(char* buf, int fd){
 	
 	i = 0;
 	j = 0;
-
 	//pass over preceding whitespace
 	while(ch == '\t' || ch == ' '){
 		ret = read(fd, &ch, 1);
