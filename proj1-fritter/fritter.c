@@ -1,3 +1,10 @@
+/**
+ * Matt Helgen (mdhelgen)
+ * CS4471 project 1
+ * 9/25/2011
+ *
+ */
+
 #include "fritter.h"
 
 int aclGetLine(char* buf, int fd);

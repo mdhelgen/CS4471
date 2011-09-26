@@ -1,0 +1,14 @@
+/**
+* Matt Helgen (mdhelgen)
+* CS4471 project 1
+* 9/25/2011
+*
+*/
+
+The approach I took was to examine any possible reasons why the file would not be able to be appended, and exit if any of them occurred.
+
+The process cannot create any files, and calls to open() are passed O_NOFOLLOW to ensure a symbolic link would cause the program to exit. 
+
+Information about the realuserid is retreived from the /etc/passwd file, and then the .acl file is searched line by line for a match to that user. If the acl file is fully searched without finding a match, the process exits.
+
+The effective userid is only set as the SUID binary owner during system calls involving opening the logfile or the .acl file. Before and after that point, the euid is set to the ruid as it is not needed.
