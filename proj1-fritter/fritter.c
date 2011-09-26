@@ -15,9 +15,6 @@ int main(int argc, char** argv){
 
 	int a;
 
-
-	int wtf = 0;
-
 	if(argc < 3){
 		printf("  usage -- fritter <logfile> <entry>\n\n");
 		exit(1);
